@@ -5,4 +5,4 @@ class DocumentResponse(BaseModel):
     id: str
     filename: str
     chunk_count: int
-    char_count: int
+    char_count: int = 0

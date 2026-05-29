@@ -4,11 +4,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
-    # Embedding
-    embedding_api_base: str = "https://api.openai.com/v1"
-    embedding_api_key: str = "sk-..."
-    embedding_model: str = "text-embedding-3-small"
-    embedding_dimensions: int = 1536
+    # Embedding (local sentence-transformers model)
+    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_dimensions: int = 384
 
     # LLM
     llm_api_base: str = "https://api.openai.com/v1"
