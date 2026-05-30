@@ -6,6 +6,7 @@ from app.services.chunker import TextChunker
 from app.services.embedder import EmbeddingService
 from app.services.vector_store import VectorStoreService
 from app.services.retriever import RetrieverService
+from app.services.generator import GeneratorService
 
 
 @lru_cache()
@@ -41,4 +42,15 @@ def get_retriever() -> RetrieverService:
         vector_store=get_vector_store(),
         top_k=settings.top_k,
         threshold=settings.similarity_threshold,
+    )
+
+
+@lru_cache()
+def get_generator() -> GeneratorService:
+    return GeneratorService(
+        api_base=settings.llm_api_base,
+        api_key=settings.llm_api_key,
+        model=settings.llm_model,
+        temperature=settings.llm_temperature,
+        max_tokens=settings.llm_max_tokens,
     )

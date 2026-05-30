@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": [".env", "../.env"], "env_file_encoding": "utf-8"}
 
     # Embedding (local sentence-transformers model)
     embedding_model: str = "all-MiniLM-L6-v2"

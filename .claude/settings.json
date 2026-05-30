@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(curl -s --max-time 5 http://localhost:8000/health)",
+      "Bash(curl -s --max-time 120 -X POST http://localhost:8000/query -H \"Content-Type: application/json\" -d '{\"question\":\"什么是机器学习？\"}')",
+      "Bash(curl -s --max-time 120 -X POST http://localhost:8000/query -H \"Content-Type: application/json\" -d \"{\\\\\"question\\\\\":\\\\\"what is machine learning?\\\\\"}\")",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(curl -s --max-time 120 -X POST http://localhost:8000/query -H \"Content-Type: application/json\" --data-raw '{\"question\":\"what is AI?\"}')",
+      "Bash(python -c \"import streamlit; print\\(streamlit.__version__\\)\")",
+      "Bash(streamlit run *)",
+      "Bash(curl -s http://localhost:8501)"
+    ]
+  }
+}
