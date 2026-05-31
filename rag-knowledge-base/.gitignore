@@ -13,6 +13,7 @@ venv/
 # Data
 data/uploads/
 data/chroma_db/
+data/models/
 
 # IDE
 .vscode/
