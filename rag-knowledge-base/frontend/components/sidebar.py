@@ -1,8 +1,11 @@
 import streamlit as st
-from session_state import get_health, get_collections
+from session_state import prefetch_sidebar_data, get_health, get_collections
 
 
 def render_sidebar(client):
+    # Kick off parallel health + collections fetch (respects 60s TTL cache)
+    prefetch_sidebar_data(client)
+
     with st.sidebar:
         st.markdown("""
         <div style="text-align:center; margin-bottom:1rem;">
@@ -12,8 +15,8 @@ def render_sidebar(client):
         </div>
         """, unsafe_allow_html=True)
 
-        # Cached health indicator (TTL 30s)
-        ok = get_health(client, ttl=30)
+        # Health indicator (reads from prefetched cache)
+        ok = get_health(client, ttl=60)
         if ok:
             st.markdown(
                 '<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;'
@@ -46,8 +49,8 @@ def render_sidebar(client):
 
         st.markdown("---")
 
-        # Cached collection stats (TTL 30s)
-        collections = get_collections(client, ttl=30)
+        # Collection stats (reads from prefetched cache)
+        collections = get_collections(client, ttl=60)
         if collections:
             st.markdown(
                 '<div style="color:#c2185b; font-weight:700; font-size:0.82rem; '

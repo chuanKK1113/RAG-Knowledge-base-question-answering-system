@@ -1,3 +1,5 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import streamlit as st
 from session_state import init_session, get_health
 from components.sidebar import render_sidebar
@@ -20,16 +22,30 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # === Stats row ===
-health_ok = get_health(st.session_state.client, ttl=10)
-try:
-    docs = st.session_state.client.list_documents()
-except Exception:
-    docs = []
-try:
-    cols_info = st.session_state.client.list_collections()
-    total_chunks = sum(c["count"] for c in cols_info)
-except Exception:
-    total_chunks = 0
+health_ok = get_health(st.session_state.client, ttl=60)
+
+# Fetch docs and chunk count in parallel
+client = st.session_state.client
+docs: list = []
+total_chunks = 0
+with ThreadPoolExecutor(max_workers=2) as pool:
+    fut_docs = pool.submit(client.list_documents)
+    fut_cols = pool.submit(client.list_collections)
+    results = {"docs": [], "chunks": 0}
+    for fut in as_completed([fut_docs, fut_cols]):
+        if fut is fut_docs:
+            try:
+                results["docs"] = fut.result()
+            except Exception:
+                pass
+        else:
+            try:
+                cols_info = fut.result()
+                results["chunks"] = sum(c["count"] for c in cols_info)
+            except Exception:
+                pass
+    docs = results["docs"]
+    total_chunks = results["chunks"]
 
 c1, c2, c3 = st.columns(3)
 with c1:
