@@ -1,15 +1,17 @@
 import streamlit as st
 from session_state import init_session
 from components.sidebar import render_sidebar
+from components.styles import inject_global_styles
 
 init_session()
 render_sidebar(st.session_state.client)
+inject_global_styles()
 
 st.markdown("""
 <div style="text-align:center; padding:1.5rem 0 1rem;">
     <div style="font-size:2.5rem;">📤</div>
-    <h2 style="margin:0.3rem 0;">上传文档</h2>
-    <p style="color:#8b949e;">支持 PDF、TXT、MD、CSV — 自动解析 · 分块 · 向量化</p>
+    <h2 style="margin:0.3rem 0; color:#c2185b;">上传文档</h2>
+    <p style="color:#8b5e66;">支持 PDF、TXT、MD、CSV — 自动解析 · 分块 · 向量化</p>
 </div>
 """, unsafe_allow_html=True)
 

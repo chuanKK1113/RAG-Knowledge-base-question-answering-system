@@ -1,15 +1,17 @@
 import streamlit as st
 from session_state import init_session
 from components.sidebar import render_sidebar
+from components.styles import inject_global_styles
 
 init_session()
 render_sidebar(st.session_state.client)
+inject_global_styles()
 
 st.markdown("""
 <div style="text-align:center; padding:1.5rem 0 1rem;">
     <div style="font-size:2.5rem;">📋</div>
-    <h2 style="margin:0.3rem 0;">知识库管理</h2>
-    <p style="color:#8b949e;">浏览、管理已上传的文档</p>
+    <h2 style="margin:0.3rem 0; color:#c2185b;">知识库管理</h2>
+    <p style="color:#8b5e66;">浏览、管理已上传的文档</p>
 </div>
 """, unsafe_allow_html=True)
 

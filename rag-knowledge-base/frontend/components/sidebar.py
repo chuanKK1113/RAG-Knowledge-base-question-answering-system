@@ -7,8 +7,8 @@ def render_sidebar(client):
         st.markdown("""
         <div style="text-align:center; margin-bottom:1rem;">
             <div style="font-size:2.5rem;">📚</div>
-            <div style="font-size:1.1rem; font-weight:700; color:#e0e0e0;">RAG 知识库</div>
-            <div style="font-size:0.75rem; color:#888;">智能文档问答系统</div>
+            <div style="font-size:1.15rem; font-weight:800; color:#c2185b;">RAG 知识库</div>
+            <div style="font-size:0.75rem; color:#8b5e66;">智能文档问答系统</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -17,8 +17,8 @@ def render_sidebar(client):
         if ok:
             st.markdown(
                 '<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;'
-                'background:#1a3a2a;border-radius:8px;font-size:0.82rem;">'
-                '<span style="width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block;"></span>'
+                'background:#fce4ec;border-radius:8px;font-size:0.82rem;color:#6d3a48;">'
+                '<span style="width:8px;height:8px;border-radius:50%;background:#e91e63;display:inline-block;"></span>'
                 ' 后端服务正常'
                 '</div>',
                 unsafe_allow_html=True,
@@ -26,8 +26,8 @@ def render_sidebar(client):
         else:
             st.markdown(
                 '<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;'
-                'background:#3a1a1a;border-radius:8px;font-size:0.82rem;">'
-                '<span style="width:8px;height:8px;border-radius:50%;background:#f44336;display:inline-block;"></span>'
+                'background:#fce4ec;border-radius:8px;font-size:0.82rem;color:#6d3a48;">'
+                '<span style="width:8px;height:8px;border-radius:50%;background:#e53935;display:inline-block;"></span>'
                 ' 后端未连接'
                 '</div>',
                 unsafe_allow_html=True,
@@ -35,7 +35,11 @@ def render_sidebar(client):
 
         st.markdown("---")
 
-        st.caption("⚙️ 检索设置")
+        st.markdown(
+            '<div style="color:#c2185b; font-weight:700; font-size:0.82rem; '
+            'margin-bottom:0.3rem; letter-spacing:0.03em;">⚙️ 检索设置</div>',
+            unsafe_allow_html=True,
+        )
         top_k = st.slider("Top-K", 1, 20, st.session_state.get("top_k", 8),
                           help="每次检索返回的文本块数量")
         st.session_state.top_k = top_k
@@ -45,9 +49,17 @@ def render_sidebar(client):
         # Cached collection stats (TTL 30s)
         collections = get_collections(client, ttl=30)
         if collections:
-            st.caption("📊 知识库统计")
+            st.markdown(
+                '<div style="color:#c2185b; font-weight:700; font-size:0.82rem; '
+                'margin-bottom:0.3rem; letter-spacing:0.03em;">📊 知识库统计</div>',
+                unsafe_allow_html=True,
+            )
             for c in collections:
                 st.metric(c['name'], f"{c['count']} chunks")
 
         st.markdown("---")
-        st.caption(f"API: {client.base_url}")
+        st.markdown(
+            f'<div style="font-size:0.7rem; color:#b08890; '
+            f'text-align:center; word-break:break-all;">API: {client.base_url}</div>',
+            unsafe_allow_html=True,
+        )
