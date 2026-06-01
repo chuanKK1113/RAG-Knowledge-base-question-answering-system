@@ -1,53 +1,51 @@
 import streamlit as st
-import time
-
+from session_state import init_session
 from components.sidebar import render_sidebar
 
+init_session()
+render_sidebar(st.session_state.client)
 
-def render():
-    st.title("📤 上传文档")
-    st.markdown("支持 **PDF** 和 **TXT** 格式的文件，上传后自动解析、分块并向量化存储。")
+st.markdown("""
+<div style="text-align:center; padding:1.5rem 0 1rem;">
+    <div style="font-size:2.5rem;">📤</div>
+    <h2 style="margin:0.3rem 0;">上传文档</h2>
+    <p style="color:#8b949e;">支持 PDF、TXT、MD、CSV — 自动解析 · 分块 · 向量化</p>
+</div>
+""", unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader(
-        "选择文件",
-        type=["pdf", "txt", "md", "csv"],
-        help="上传 PDF/TXT 文件",
-    )
+uploaded_file = st.file_uploader(
+    "拖拽文件到此处或点击选择",
+    type=["pdf", "txt", "md", "csv"],
+    label_visibility="collapsed",
+)
 
-    if uploaded_file is not None:
-        file_size_kb = len(uploaded_file.getvalue()) / 1024
-        st.info(f"文件名: **{uploaded_file.name}** | 大小: {file_size_kb:.1f} KB")
+if uploaded_file is not None:
+    file_size_kb = len(uploaded_file.getvalue()) / 1024
+    col_a, col_b = st.columns([3, 1])
+    with col_a:
+        st.markdown(f"**{uploaded_file.name}** · {file_size_kb:.1f} KB")
+    with col_b:
+        do_upload = st.button("🚀 开始处理", type="primary", use_container_width=True)
 
-        if st.button("🚀 开始上传并处理", type="primary"):
-            with st.status("处理中...", expanded=True) as status:
-                st.write("📄 正在解析文档...")
-                try:
-                    result = st.session_state.client.upload_document(
-                        uploaded_file.getvalue(), uploaded_file.name
-                    )
-                    st.write(f"✅ 解析完成：{result['char_count']} 字符")
-                    st.write(f"✂️ 分块完成：{result['chunk_count']} 个文本块")
-                    st.write("🔢 向量化并存入 ChromaDB...")
-                    st.write("✅ 全部完成！")
-                    status.update(
-                        label=f"上传成功！共 {result['chunk_count']} 个 chunks",
-                        state="complete",
-                    )
-                    st.success(
-                        f"文档 **{result['filename']}** 已成功摄入知识库 "
-                        f"（{result['chunk_count']} chunks, {result['char_count']} 字符）"
-                    )
-                except Exception as e:
-                    status.update(label="上传失败", state="error")
-                    st.error(f"处理失败: {e}")
+    if do_upload:
+        with st.status("正在处理...", expanded=True) as status:
+            try:
+                st.write("📄 解析文档...")
+                result = st.session_state.client.upload_document(
+                    uploaded_file.getvalue(), uploaded_file.name
+                )
+                st.write(f"✅ 解析完成 — {result['char_count']:,} 字符")
+                st.write(f"✂️ 生成 {result['chunk_count']} 个文本块")
+                st.write("🔢 向量化 & 写入 ChromaDB...")
+                status.update(
+                    label=f"✅ 完成！{result['filename']} ({result['chunk_count']} chunks)",
+                    state="complete",
+                )
+                st.balloons()
 
+                # Invalidate collection cache
+                st.session_state.collections_cache = None
 
-if __name__ == "__main__":
-    st.set_page_config(page_title="上传文档", page_icon="📤")
-    if "client" not in st.session_state:
-        from api_client import APIClient
-        st.session_state.client = APIClient("http://localhost:8000")
-    if "top_k" not in st.session_state:
-        st.session_state.top_k = 5
-    render_sidebar(st.session_state.client)
-    render()
+            except Exception as e:
+                status.update(label="处理失败", state="error")
+                st.error(str(e))

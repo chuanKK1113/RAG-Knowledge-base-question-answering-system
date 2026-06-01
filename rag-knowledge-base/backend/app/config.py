@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     model_config = {"env_file": [".env", "../.env"], "env_file_encoding": "utf-8"}
 
     # Embedding (local sentence-transformers model)
-    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_model: str = "paraphrase-multilingual-MiniLM-L12-v2"
     embedding_dimensions: int = 384
 
     # LLM
@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     chunk_overlap: int = 150
 
     # Retrieval
-    top_k: int = 5
-    similarity_threshold: float = 0.7
+    top_k: int = 8
+    similarity_threshold: float = 0.55
 
     # Server
     host: str = "0.0.0.0"
