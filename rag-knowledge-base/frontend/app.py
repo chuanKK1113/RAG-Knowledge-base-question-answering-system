@@ -83,10 +83,6 @@ card_data = [
 ]
 for col, (icon, title, desc, page) in zip(cols, card_data):
     with col:
-        st.markdown(f"""
-        <a href="{page}" class="card">
-            <div class="icon">{icon}</div>
-            <div class="title">{title}</div>
-            <div class="desc">{desc}</div>
-        </a>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.page_link(page, label=title, icon=icon, use_container_width=True)
+            st.caption(desc)
